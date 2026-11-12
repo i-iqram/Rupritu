@@ -60,11 +60,11 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#2a1a1a; --band:#341f20; --card:#3a2524; --line:#573837;
   --fg:#f7e6dc; --muted:#c8a597; --rust:#ec9a72; --rust-2:#f3b08f; --rose:#e8a3a6; --blush:#5a3337;
-  --shadow:0 18px 40px -26px rgba(0,0,0,.8); --t1:#5a3135; --t2:#3d4535; --t3:#5a3a2a; --t4:#4a3448; --t5:#55462c; color-scheme:dark}}
+  --shadow:0 18px 40px -26px rgba(0,0,0,.8); --sglow:rgba(255,215,190,.06); --fog:rgba(255,235,225,.10); --sgold:rgba(240,175,70,.14); --t1:#5a3135; --t2:#3d4535; --t3:#5a3a2a; --t4:#4a3448; --t5:#55462c; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#2a1a1a; --band:#341f20; --card:#3a2524; --line:#573837;
   --fg:#f7e6dc; --muted:#c8a597; --rust:#ec9a72; --rust-2:#f3b08f; --rose:#e8a3a6; --blush:#5a3337;
-  --shadow:0 18px 40px -26px rgba(0,0,0,.8); --t1:#5a3135; --t2:#3d4535; --t3:#5a3a2a; --t4:#4a3448; --t5:#55462c; color-scheme:dark}
+  --shadow:0 18px 40px -26px rgba(0,0,0,.8); --sglow:rgba(255,215,190,.06); --fog:rgba(255,235,225,.10); --sgold:rgba(240,175,70,.14); --t1:#5a3135; --t2:#3d4535; --t3:#5a3a2a; --t4:#4a3448; --t5:#55462c; color-scheme:dark}
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:80px}
@@ -433,8 +433,8 @@ html{scrollbar-color:var(--rose) var(--bg);scrollbar-width:thin}
 .picks li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--bg);border:1px solid var(--line);font-size:.92rem;transition:border-color .3s,transform .3s}
 .picks li:hover{border-color:var(--rose);transform:translateX(3px)}
 .s-body .btn{align-self:flex-start;margin-top:6px}
-.season.on .s-art,.season.on .s-body{animation:seasonIn .6s cubic-bezier(.2,.8,.2,1)}
-@keyframes seasonIn{from{transform:translateY(14px)}}
+
+
 @media (max-width:820px){.season{grid-template-columns:1fr}.s-art{min-height:240px}}
 @media (max-width:340px){.picks{grid-template-columns:1fr}}
 @media (max-width:420px){.picks li{font-size:.84rem;padding:8px 10px;gap:8px}.tab{padding:8px 14px;font-size:.88rem}}
@@ -534,6 +534,84 @@ summary .e .ic{width:18px;height:18px;color:var(--rust)}
   .s-art .a1{height:110px}.s-art .a2{height:58px}.s-art .a3{height:80px}
   @media (max-width:860px){.stage{width:min(380px,calc(100vw - 40px));height:min(380px,calc(100vw - 40px))}}
 }
+
+/* ===== seasons: sliding tab pill, side-reveal per season, living art ===== */
+.tabs{position:relative}
+.tabs .ind{position:absolute;left:0;top:0;width:0;height:0;border-radius:99px;background:var(--rust);box-shadow:0 10px 22px -12px rgba(150,60,30,.7);z-index:0;pointer-events:none;opacity:0;transition:transform .55s cubic-bezier(.3,1.25,.4,1),width .55s cubic-bezier(.3,1.25,.4,1),height .55s,opacity .3s}
+.tabs.ind-on .ind{opacity:1}
+.tabs.ind-on .tab{position:relative;z-index:1}
+.tabs.ind-on .tab[aria-selected="true"]{background:transparent;border-color:transparent}
+.season.go-r .s-art{animation:artR .8s cubic-bezier(.2,.8,.2,1) both}
+.season.go-l .s-art{animation:artL .8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes artR{from{opacity:.2;transform:translateX(50px);clip-path:circle(0% at 100% 45%)}to{opacity:1;transform:none;clip-path:circle(150% at 100% 45%)}}
+@keyframes artL{from{opacity:.2;transform:translateX(-50px);clip-path:circle(0% at 0% 45%)}to{opacity:1;transform:none;clip-path:circle(150% at 0% 45%)}}
+.season.go-r .s-body{animation:bodyR .6s cubic-bezier(.2,.8,.2,1) both}
+.season.go-l .s-body{animation:bodyL .6s cubic-bezier(.2,.8,.2,1) both}
+.season.go-r .s-body h3,.season.go-r .s-body>p,.season.go-r .picks li,.season.go-r .s-body .btn{animation:txtR .65s cubic-bezier(.2,.8,.2,1) both}
+.season.go-l .s-body h3,.season.go-l .s-body>p,.season.go-l .picks li,.season.go-l .s-body .btn{animation:txtL .65s cubic-bezier(.2,.8,.2,1) both}
+.season.on .s-body h3{animation-delay:.12s}.season.on .s-body>p{animation-delay:.2s}
+.season .picks li:nth-child(1){animation-delay:.28s}.season .picks li:nth-child(2){animation-delay:.33s}.season .picks li:nth-child(3){animation-delay:.38s}
+.season .picks li:nth-child(4){animation-delay:.43s}.season .picks li:nth-child(5){animation-delay:.48s}.season .picks li:nth-child(6){animation-delay:.53s}
+.season.on .s-body .btn{animation-delay:.6s}
+@keyframes bodyR{from{opacity:0;transform:translateX(28px)}}
+@keyframes bodyL{from{opacity:0;transform:translateX(-28px)}}
+@keyframes txtR{from{opacity:0;transform:translateX(40px)}}
+@keyframes txtL{from{opacity:0;transform:translateX(-40px)}}
+/* living art: each season has its own weather */
+.s-art .fx{position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none;z-index:0;overflow:hidden;border-radius:inherit}
+.s-art .lbl{z-index:1}
+#sz-winter .bigic{animation:spin 26s linear infinite}
+#sz-summer .s-art::after{content:"";position:absolute;left:50%;top:44%;width:190px;height:190px;margin:-95px 0 0 -95px;border-radius:50%;background:radial-gradient(circle,rgba(236,170,70,.45),rgba(236,170,70,0) 68%);z-index:-1;animation:glow 4s ease-in-out infinite}
+@keyframes glow{50%{transform:scale(1.18);opacity:.6}}
+#sz-summer .bigic{animation:spin 40s linear infinite}
+#sz-rain .bigic{transform-origin:50% 90%;animation:tilt 3.4s ease-in-out infinite}
+@keyframes tilt{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes star{0%,100%{opacity:.2;transform:scale(.55)}50%{opacity:1;transform:scale(1.1) rotate(45deg)}}
+#sz-eid .bigic{transform-origin:50% 50%;animation:tilt 5s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.s-art .fx,#sz-summer .s-art::after{display:none}.tabs .ind{transition:none}}
+
+/* ===== seasons: the whole section changes with the season ===== */
+:root{--sglow:rgba(255,255,255,.65);--sgold:rgba(240,175,70,.38)}
+.seasons-sec{position:relative;isolation:isolate;overflow:hidden}
+.seasons-sec>.in{position:relative;z-index:1}
+.sbg{position:absolute;top:0;right:0;bottom:0;left:0;z-index:0;pointer-events:none;overflow:hidden}
+.sbg .L{position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;visibility:hidden}
+.sbg .L.on,.sbg .L.was{opacity:1;visibility:visible}
+.sbg .L.on{z-index:1}
+.sbg .L.go-r{animation:secR 1.1s cubic-bezier(.3,.7,.2,1) both}
+.sbg .L.go-l{animation:secL 1.1s cubic-bezier(.3,.7,.2,1) both}
+@keyframes secR{from{clip-path:circle(0% at 100% 30%)}to{clip-path:circle(160% at 100% 30%)}}
+@keyframes secL{from{clip-path:circle(0% at 0% 30%)}to{clip-path:circle(160% at 0% 30%)}}
+.L-winter{background:radial-gradient(50% 38% at 86% 10%,var(--sglow),transparent 70%),radial-gradient(40% 30% at 8% 80%,var(--sglow),transparent 70%),linear-gradient(180deg,var(--bg),var(--t4) 28%,var(--t4) 74%,var(--bg))}
+.L-summer{background:radial-gradient(42% 34% at 88% 8%,var(--sgold),transparent 70%),radial-gradient(35% 28% at 6% 70%,var(--sglow),transparent 70%),linear-gradient(180deg,var(--bg),var(--t5) 28%,var(--t5) 74%,var(--bg))}
+.L-rain{background:radial-gradient(60% 26% at 50% 0%,rgba(120,140,128,.14),transparent 75%),linear-gradient(180deg,var(--bg),var(--t2) 28%,var(--t2) 74%,var(--bg))}
+.L-eid{background:radial-gradient(45% 35% at 50% 30%,var(--sgold),transparent 70%),linear-gradient(180deg,var(--bg),var(--t1) 28%,var(--t1) 74%,var(--bg))}
+.sbg .fx{position:absolute;top:0;right:0;bottom:0;left:0;overflow:hidden}
+@keyframes sfall{from{transform:translateY(-4%)}to{transform:translateY(100%)}}
+@media (prefers-reduced-motion:reduce){.sbg .fx{display:none}}
+
+/* Bangladesh season details: winter fog + mustard flowers, summer Krishnachura petals, monsoon rain + Kadam, Eid fairy lights + rose petals */
+:root{--fog:rgba(255,255,255,.75)}
+.fx b.f{position:absolute;top:0;height:100%;width:30px;margin-left:-15px;animation:sfall var(--t) linear var(--d) infinite;will-change:transform}
+.fx b.f>i{position:absolute;left:50%;top:0;display:block;width:var(--s);height:var(--s);margin-left:calc(var(--s) / -2)}
+@keyframes flutter{0%{transform:translateX(-16px) rotate(0) rotateX(0)}25%{transform:translateX(0) rotate(90deg) rotateX(55deg)}50%{transform:translateX(16px) rotate(180deg) rotateX(0)}75%{transform:translateX(0) rotate(270deg) rotateX(-55deg)}100%{transform:translateX(-16px) rotate(360deg) rotateX(0)}}
+.fx b.f>.p-krish{border-radius:80% 0 80% 0;background:radial-gradient(circle at 30% 30%,#ff8d50,#e2401c 55%,#b3260f);opacity:.92;animation:flutter var(--r) ease-in-out infinite}
+.fx b.f>.p-radha{border-radius:80% 0 80% 0;background:radial-gradient(circle at 30% 30%,#ffe27a,#f0b41c 60%,#d58f0a);opacity:.9;animation:flutter var(--r) ease-in-out infinite}
+.fx b.f>.p-rose{border-radius:50% 0 50% 50%;background:radial-gradient(circle at 35% 35%,#ffc2cd,#e0607a 62%,#b83a55);opacity:.9;animation:flutter var(--r) ease-in-out infinite}
+.fx b.f>.p-mustard{width:calc(var(--s) * .34);height:calc(var(--s) * .34);margin-left:calc(var(--s) * -.17);margin-top:calc(var(--s) * .33);border-radius:50%;background:#c98a06;
+  box-shadow:0 calc(var(--s) * -.33) 0 calc(var(--s) * .05) #f7d23a,calc(var(--s) * .33) 0 0 calc(var(--s) * .05) #f7d23a,0 calc(var(--s) * .33) 0 calc(var(--s) * .05) #f7d23a,calc(var(--s) * -.33) 0 0 calc(var(--s) * .05) #f7d23a;animation:flutter var(--r) ease-in-out infinite}
+.fx b.f>.p-dew{border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(217,138,138,.3),0 0 6px rgba(255,255,255,.9);opacity:.7}
+.fx b.f>.p-kadam{border-radius:50%;background:radial-gradient(circle,#e59d1f 0 33%,#f3c24a 34% 36%,transparent 37%),radial-gradient(circle,transparent 0 60%,rgba(255,250,232,.9) 61% 70%,transparent 71%),repeating-conic-gradient(rgba(236,214,160,.95) 0 5deg,rgba(255,248,222,0) 5deg 11deg);animation:spin var(--r) linear infinite;filter:drop-shadow(0 2px 3px rgba(90,60,20,.25))}
+.fx b.f>.streak{width:1.6px;margin-left:0;border-radius:2px;background:linear-gradient(rgba(201,110,90,0),rgba(201,110,90,.75))}
+.fx .wind{position:absolute;top:-20%;bottom:-20%;left:-20%;right:-20%;transform:rotate(12deg)}
+.fx .star{position:absolute;display:block;width:var(--s);height:var(--s);background:#d9a441;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);opacity:.25;animation:star var(--t) ease-in-out var(--d) infinite}
+.fx .fog{position:absolute;left:-30%;width:160%;height:var(--h);background:radial-gradient(50% 50% at 50% 50%,var(--fog),rgba(255,255,255,0) 72%);animation:fogmove var(--t) ease-in-out var(--d) infinite alternate}
+@keyframes fogmove{from{transform:translateX(-14%)}to{transform:translateX(14%)}}
+.fx .lights{position:absolute;top:0;left:0;width:100%;height:120px;overflow:visible;filter:drop-shadow(0 0 4px rgba(255,196,110,.85))}
+.fx .lights path{fill:none;stroke:rgba(120,80,50,.45);stroke-width:1.2}
+.fx .lights circle{animation:blink 2.6s ease-in-out infinite}
+.fx .lights circle:nth-of-type(3n+1){animation-delay:-.9s}.fx .lights circle:nth-of-type(3n+2){animation-delay:-1.7s}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 </style>
 <script>window.rpFonts&&rpFonts()</script>
 
@@ -883,8 +961,41 @@ if(matchMedia('(pointer: fine) and (hover: hover)').matches&&!reduce){
 const pr=$('#prog');function sp(){const h=document.documentElement.scrollHeight-innerHeight;pr.style.setProperty('--sp',h>0?(scrollY/h).toFixed(4):0)}addEventListener('scroll',sp,{passive:true});sp();
 /* season tabs */
 const tabs=[...$$('.tab')];
-function pick(t){tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;const p=document.getElementById(x.getAttribute('aria-controls'));p.hidden=!on;p.classList.toggle('on',on)})}
-tabs.forEach((t,i)=>{t.addEventListener('click',()=>pick(t));t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];pick(n);n.focus()}})});
+const tabBox=$('.tabs'),ind=document.createElement('span');ind.className='ind';ind.setAttribute('aria-hidden','true');tabBox.insertBefore(ind,tabBox.firstChild);
+function moveInd(){const t=tabs.find(x=>x.getAttribute('aria-selected')==='true');if(!t||!t.offsetWidth)return;ind.style.width=t.offsetWidth+'px';ind.style.height=t.offsetHeight+'px';ind.style.transform='translate('+t.offsetLeft+'px,'+t.offsetTop+'px)';tabBox.classList.add('ind-on')}
+let curTab=null,goT;
+/* season details, as people know them in Bangladesh: winter fog + mustard flowers, summer Krishnachura petals, monsoon rain + Kadam flowers, Eid fairy lights + rose petals */
+let seed=11;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280,R=(a,b)=>(a+rnd()*(b-a)).toFixed(2);
+function fall(cls,n,s0,s1,t0,t1,r0,r1){let h='';for(let i=0;i<n;i++){const t=R(t0,t1);h+='<b class="f" style="left:'+R(2,98)+'%;--t:'+t+'s;--d:-'+R(0,t)+'s"><i class="'+cls+'" style="--s:'+R(s0,s1)+'px;--r:'+R(r0||3,r1||6)+'s"></i></b>'}return h}
+function stars(n,s0,s1,top){let h='';for(let i=0;i<n;i++)h+='<i class="star" style="left:'+R(3,97)+'%;top:'+R(4,top)+'%;--s:'+R(s0,s1)+'px;--t:'+R(2.4,5)+'s;--d:-'+R(0,5)+'s"></i>';return h}
+function fogs(n){let h='';for(let i=0;i<n;i++)h+='<i class="fog" style="top:'+R(-5,80)+'%;--h:'+R(110,190)+'px;--t:'+R(18,32)+'s;--d:-'+R(0,30)+'s"></i>';return h}
+function fxHTML(k,big){const m=big?(innerWidth<700?.55:1):.4,N=x=>Math.max(1,Math.round(x*m));
+  if(k==='winter')return fogs(big?3:2)+fall('p-mustard',N(16),11,16,13,22,4,7)+fall('p-dew',N(10),3,5,10,18);
+  if(k==='summer')return fall('p-krish',N(20),9,15,9,16,3,5.5)+fall('p-radha',N(5),8,12,10,16,3,5.5);
+  if(k==='rain')return '<span class="wind">'+fall('streak',N(44),12,22,1.2,2)+fall('p-kadam',N(5),20,28,12,18,6,10)+'</span>';
+  return (big?'<svg class="lights" aria-hidden="true"></svg>':'')+stars(N(14),7,13,big?92:70)+fall('p-rose',N(14),8,13,10,17,3,5.5)}
+$$('.season').forEach(p=>{const a=p.querySelector('.s-art');if(!a)return;const fx=document.createElement('span');fx.className='fx';fx.setAttribute('aria-hidden','true');fx.innerHTML=fxHTML(p.id.slice(3),false);a.insertBefore(fx,a.firstChild)});
+/* whole-section background layers, one per season */
+const secEl=$('#seasons'),sbg=document.createElement('div');sbg.className='sbg';sbg.setAttribute('aria-hidden','true');
+tabs.forEach(t=>{const k=t.id.slice(3),L=document.createElement('div');L.className='L L-'+k;L.innerHTML='<span class="fx">'+fxHTML(k,true)+'</span>';sbg.appendChild(L)});
+/* Eid fairy lights (মরিচ বাতি) hanging across the top */
+function drawLights(){const sv=sbg.querySelector('.lights');if(!sv)return;const W=sbg.clientWidth||innerWidth;let h='';
+  [[46,6,0],[72,2,23]].forEach(([sag,y0,off])=>{const y=x=>y0+sag*4*(x/W)*(1-x/W);h+='<path d="M0,'+y0+' Q'+W/2+','+(y0+sag*2)+' '+W+','+y0+'"/>';
+    const cols=['#ffd27a','#ff9fb0','#ffe9b0','#ffb36b'];let j=0;for(let x=18+off;x<W-6;x+=46,j++)h+='<circle cx="'+x.toFixed(1)+'" cy="'+(y(x)+4).toFixed(1)+'" r="3.6" fill="'+cols[j%4]+'"/>'});
+  sv.setAttribute('viewBox','0 0 '+W+' 120');sv.innerHTML=h}
+secEl.insertBefore(sbg,secEl.firstChild);drawLights();let dlT;addEventListener('resize',()=>{clearTimeout(dlT);dlT=setTimeout(drawLights,200)});
+let bgT;function bgTo(t,dir){const L=sbg.querySelector('.L-'+t.id.slice(3)),prev=sbg.querySelector('.L.on');if(L===prev)return;
+  sbg.querySelectorAll('.L').forEach(x=>x.classList.remove('was','go-r','go-l'));if(prev){prev.classList.remove('on');if(dir)prev.classList.add('was')}
+  L.classList.add('on');if(dir){void L.offsetWidth;L.classList.add(dir)}clearTimeout(bgT);bgT=setTimeout(()=>sbg.querySelectorAll('.L').forEach(x=>x.classList.remove('was','go-r','go-l')),1250)}
+function pick(t,anim){const from=tabs.indexOf(curTab),to=tabs.indexOf(t);if(t===curTab)return;
+  tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;const p=document.getElementById(x.getAttribute('aria-controls'));p.hidden=!on;p.classList.toggle('on',on);p.classList.remove('go-r','go-l');
+    if(on&&anim&&!reduce&&from>-1){void p.offsetWidth;p.classList.add(to>from?'go-r':'go-l');clearTimeout(goT);goT=setTimeout(()=>p.classList.remove('go-r','go-l'),1400)}});
+  bgTo(t,anim&&!reduce&&from>-1?(to>from?'go-r':'go-l'):'');curTab=t;moveInd()}
+/* swipe left/right on a season to change it (phones) */
+$$('.season').forEach(p=>{let sx=0,sy=0;p.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+  p.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.6){const i=tabs.indexOf(curTab);pick(tabs[(i+(dx<0?1:-1)+tabs.length)%tabs.length],true)}},{passive:true})});
+addEventListener('resize',moveInd);addEventListener('load',moveInd);document.fonts&&document.fonts.ready.then(moveInd);
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>pick(t,true));t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length];pick(n,true);n.focus()}})});
 /* open the season the order will arrive in (delivery takes ~1 month): Nov–Feb winter, Mar–May summer, Jun–Oct monsoon */
 (()=>{const m=(new Date().getMonth()+1)%12;const id=(m>=10||m<=1)?'tb-winter':(m<=4?'tb-summer':'tb-rain');pick(document.getElementById(id)||tabs[0])})();
 $$('[data-season]').forEach(a=>{const p=a.closest('.season');const items=[...p.querySelectorAll('.picks li')].map(l=>l.textContent.trim()).join(', ');a.href='https://wa.me/8801846829909?text='+encodeURIComponent('আসসালামু আলাইকুম রূপঋতু 🌸\n'+a.dataset.season+' সম্পর্কে জানতে চাই।\n('+items+')')});
